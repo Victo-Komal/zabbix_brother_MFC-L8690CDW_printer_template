@@ -9,7 +9,8 @@ zabbix_export:
       name: 'Brother Printers'
       description: |
         ## Overview
-        (Made by Victor Torstensen for Vertica A/S For Brother MFC-L8690CDW but works for most Brother printers)
+        Brother MFC-L8690CDW Zabbix Template (can be used for other Brother Printers as well)
+        Made by Victor Torstensen for Vertica A/S 
       templates:
         - name: 'SNMP Interfaces'
       groups:
@@ -155,16 +156,16 @@ zabbix_export:
           trends: '0'
           value_type: CHAR
           valuemap:
-            name: 'Printer Status Color value mapping'
+            name: 'Printers status color value mapping'
           triggers:
             - uuid: 0742d062f5bb4a2d81a07c731d49dfa6
               expression: 'last(/Brother Printers/printers.status.color)=5'
-              name: 'Printer Status Color: No Color Toner'
+              name: 'printer status color is "red" !!! sa_r'
               priority: DISASTER
               manual_close: 'YES'
             - uuid: 61314c7fc0e949e8bc2e053e960a678b
               expression: 'last(/Brother Printers/printers.status.color)=3'
-              name: 'Printer Status Color: Almost no color'
+              name: 'printer status color is "yellow" !!!   sa_r'
               priority: WARNING
               manual_close: 'YES'
         - uuid: 339afff04c64485f8d9442467169a103
@@ -176,26 +177,26 @@ zabbix_export:
           trends: '0'
           value_type: CHAR
           valuemap:
-            name: 'Printer Status Written value mapping'
+            name: 'Printers status written value mapping'
           triggers:
             - uuid: e6df54d4ef1647159da6aa4e88432efa
               expression: 'last(/Brother Printers/printers.status.written)=41213'
-              name: 'Printer Status written: No Paper'
+              name: 'Printers status written "No Paper"    sa_r'
               priority: DISASTER
               manual_close: 'YES'
             - uuid: e5c8287fed924fafa251924da36645cd
               expression: 'last(/Brother Printers/printers.status.written)=40010'
-              name: 'Printer Status Written: No Toner (BK)'
+              name: 'Printers status written "No Toner (BK)"    sa_r'
               priority: DISASTER
               manual_close: 'YES'
             - uuid: 4bc9d9860acb4643bd7d57f0a3314365
               expression: 'last(/Brother Printers/printers.status.written)=62121'
-              name: 'Printer Status Written: Replace Toner'
+              name: 'Printers status written "Replace Toner"    sa_r'
               priority: AVERAGE
               manual_close: 'YES'
             - uuid: 0540ce4f0cc5402ea882c2fd7845f696
               expression: 'last(/Brother Printers/printers.status.written)=10209'
-              name: 'Printers Status Written: Toner Low (BK)'
+              name: 'Printers status written "Toner Low (BK)"    sa_r'
               priority: AVERAGE
               manual_close: 'YES'
         - uuid: b3ec874cba04433ca2cd2d11272742a9
