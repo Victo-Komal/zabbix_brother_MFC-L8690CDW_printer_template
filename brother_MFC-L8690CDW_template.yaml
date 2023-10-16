@@ -9,7 +9,7 @@ zabbix_export:
       name: 'Brother Printers'
       description: |
         ## Overview
-        (Made by Victor Torstensen for Vertica A/S For Brother MFC-L8690CDW)
+        (Made by Victor Torstensen for Vertica A/S For Brother MFC-L8690CDW but works for most Brother printers)
       templates:
         - name: 'SNMP Interfaces'
       groups:
