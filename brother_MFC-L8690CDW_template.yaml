@@ -160,12 +160,12 @@ zabbix_export:
           triggers:
             - uuid: 0742d062f5bb4a2d81a07c731d49dfa6
               expression: 'last(/Brother Printers/printers.status.color)=5'
-              name: 'printer status color is "red" !!! sa_r'
+              name: 'Printer Status Color: No Color Toner!'
               priority: DISASTER
               manual_close: 'YES'
             - uuid: 61314c7fc0e949e8bc2e053e960a678b
               expression: 'last(/Brother Printers/printers.status.color)=3'
-              name: 'printer status color is "yellow" !!!   sa_r'
+              name: 'Printer Status Color: Almost No Color Toner!'
               priority: WARNING
               manual_close: 'YES'
         - uuid: 339afff04c64485f8d9442467169a103
@@ -181,22 +181,22 @@ zabbix_export:
           triggers:
             - uuid: e6df54d4ef1647159da6aa4e88432efa
               expression: 'last(/Brother Printers/printers.status.written)=41213'
-              name: 'Printers status written "No Paper"    sa_r'
+              name: 'Printers Status Written: No Paper'
               priority: DISASTER
               manual_close: 'YES'
             - uuid: e5c8287fed924fafa251924da36645cd
               expression: 'last(/Brother Printers/printers.status.written)=40010'
-              name: 'Printers status written "No Toner (BK)"    sa_r'
+              name: 'Printers Status Written: No Toner (BK)'
               priority: DISASTER
               manual_close: 'YES'
             - uuid: 4bc9d9860acb4643bd7d57f0a3314365
               expression: 'last(/Brother Printers/printers.status.written)=62121'
-              name: 'Printers status written "Replace Toner"    sa_r'
+              name: 'Printers Status Written: Replace Toner'
               priority: AVERAGE
               manual_close: 'YES'
             - uuid: 0540ce4f0cc5402ea882c2fd7845f696
               expression: 'last(/Brother Printers/printers.status.written)=10209'
-              name: 'Printers status written "Toner Low (BK)"    sa_r'
+              name: 'Printers Status Written: Toner Low (BK)'
               priority: AVERAGE
               manual_close: 'YES'
         - uuid: b3ec874cba04433ca2cd2d11272742a9
