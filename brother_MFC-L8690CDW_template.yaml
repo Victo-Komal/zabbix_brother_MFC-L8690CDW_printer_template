@@ -1,0 +1,569 @@
+zabbix_export:
+  version: '6.4'
+  template_groups:
+    - uuid: 338840733365409b91c758e78f5b0483
+      name: Printer
+  templates:
+    - uuid: a945c91b1b74482d907485c6c2674729
+      template: 'Brother Printers'
+      name: 'Brother Printers'
+      description: |
+        ## Overview
+        (Made by Victor Torstensen for Vertica A/S For Brother MFC-L8690CDW)
+      templates:
+        - name: 'SNMP Interfaces'
+      groups:
+        - name: Printer
+      items:
+        - uuid: 63e20e4277f54764b1db4ba65be71bfa
+          name: 'Alert Color'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.2435.2.3.9.4.2.1.5.4.5.6.0
+          key: brBackLightColor
+          delay: 30s
+          trends: '0'
+          value_type: CHAR
+          valuemap:
+            name: brBackLightColor
+          tags:
+            - tag: Application
+              value: Alert
+        - uuid: 19851beddff8414d9443375d6280af89
+          name: 'Device Name'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.2435.2.4.4.1240.1.5.1.4.1
+          key: brMultiIFNodeName
+          delay: 1h
+          trends: '0'
+          value_type: TEXT
+          tags:
+            - tag: Application
+              value: 'Node Info'
+        - uuid: a298e10ff9834d1b84df27eca3292dfb
+          name: 'Drum Unit % Life Remaining'
+          type: CALCULATED
+          key: drum-use
+          delay: 10m
+          value_type: FLOAT
+          units: '%'
+          params: '100*last(//prtMarkerSuppliesLevel.2)/last(//prtMarkerSuppliesMaxCapacity.2)'
+          tags:
+            - tag: Application
+              value: Supplies
+          triggers:
+            - uuid: 81d133d272464b4c85a4f4084159161e
+              expression: 'last(/Brother Printers/drum-use,#1)<10'
+              name: 'Drum unit life less than 10% on {HOST.NAME}'
+              priority: WARNING
+              manual_close: 'YES'
+        - uuid: 7192c754e7104c55b8abc83d69f64484
+          name: 'Model Name'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.2.1.25.3.2.1.3.1
+          key: hrDeviceDescr
+          delay: 1h
+          trends: '0'
+          value_type: TEXT
+          inventory_link: HARDWARE
+          tags:
+            - tag: Application
+              value: 'Node Info'
+        - uuid: 550d88cfe4d4455796062efb29e00cbc
+          name: 'Cartridge name'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.2.1.43.11.1.1.6.1.1
+          key: mib-2.43.11.1.1.6.1.1
+          delay: 1d
+          history: 365d
+          trends: '0'
+          value_type: TEXT
+          tags:
+            - tag: Application
+              value: Printer
+        - uuid: 75b9b638fd4c4ba6a0525ee912fcb698
+          name: 'Status Text 1'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.2.1.43.16.5.1.2.1.1
+          key: mib-2.43.16.5.1.2.1.1
+          delay: 30s
+          trends: '0'
+          value_type: TEXT
+          description: prtConsoleDisplayBufferText
+          tags:
+            - tag: Application
+              value: Printer
+        - uuid: af36284c5f0641a7ad2f8386fc35afb9
+          name: 'Status Text 2'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.2.1.43.16.5.1.2.1.2
+          key: mib-2.43.16.5.1.2.1.2
+          delay: 30s
+          trends: '0'
+          value_type: TEXT
+          description: prtConsoleDisplayBufferText
+          tags:
+            - tag: Application
+              value: Printer
+        - uuid: cb0be1eca9aa4b54af184b42e8b709e6
+          name: 'HTTP Check'
+          type: SIMPLE
+          key: 'net.tcp.service[http]'
+          tags:
+            - tag: Application
+              value: Services
+          triggers:
+            - uuid: d9ae19bdfe744607a0ca939323a8c8ba
+              expression: 'last(/Brother Printers/net.tcp.service[http])<>1'
+              name: 'HTTP Service is Unreachable at {HOST.NAME}'
+              priority: HIGH
+        - uuid: 33881c66ad414681ac0888ad20fe043b
+          name: 'Print Spooler Check'
+          type: SIMPLE
+          key: 'net.tcp.service[tcp,,515]'
+          tags:
+            - tag: Application
+              value: Services
+          triggers:
+            - uuid: ea796c5491354360bea8a86db6183413
+              expression: 'last(/Brother Printers/net.tcp.service[tcp,,515])=0'
+              name: 'Printer Spooler Service is Unreachable at {HOST.NAME}'
+              priority: HIGH
+        - uuid: 0bdb2433d3804a3d8df1c1f6e57cb082
+          name: 'JetDirect Check'
+          type: SIMPLE
+          key: 'net.tcp.service[tcp,,9100]'
+          tags:
+            - tag: Application
+              value: Services
+          triggers:
+            - uuid: b92470a029f4422ba765dd0e6bdcad86
+              expression: 'last(/Brother Printers/net.tcp.service[tcp,,9100])=0'
+              name: 'JetDirect Service is Unreachable at {HOST.NAME}'
+              priority: HIGH
+        - uuid: 5b4f9bfc5572463b8bc3d7862c883a07
+          name: 'Printed pages'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.2.1.43.10.2.1.4.1.1
+          key: number.of.printed.pages
+          delay: 1h
+        - uuid: a7df07db9ff74d5e905523dc95ae6e39
+          name: 'Status color'
+          type: SNMP_AGENT
+          snmp_oid: iso.3.6.1.2.1.25.3.2.1.5.1
+          key: printers.status.color
+          delay: 25s
+          trends: '0'
+          value_type: CHAR
+          valuemap:
+            name: 'Printer Status Color value mapping'
+          triggers:
+            - uuid: 0742d062f5bb4a2d81a07c731d49dfa6
+              expression: 'last(/Brother Printers/printers.status.color)=5'
+              name: 'Printer Status Color: No Color Toner'
+              priority: DISASTER
+              manual_close: 'YES'
+            - uuid: 61314c7fc0e949e8bc2e053e960a678b
+              expression: 'last(/Brother Printers/printers.status.color)=3'
+              name: 'Printer Status Color: Almost no color'
+              priority: WARNING
+              manual_close: 'YES'
+        - uuid: 339afff04c64485f8d9442467169a103
+          name: 'Status written'
+          type: SNMP_AGENT
+          snmp_oid: iso.3.6.1.2.1.43.18.1.1.6.1.1
+          key: printers.status.written
+          delay: 25s
+          trends: '0'
+          value_type: CHAR
+          valuemap:
+            name: 'Printer Status Written value mapping'
+          triggers:
+            - uuid: e6df54d4ef1647159da6aa4e88432efa
+              expression: 'last(/Brother Printers/printers.status.written)=41213'
+              name: 'Printer Status written: No Paper'
+              priority: DISASTER
+              manual_close: 'YES'
+            - uuid: e5c8287fed924fafa251924da36645cd
+              expression: 'last(/Brother Printers/printers.status.written)=40010'
+              name: 'Printer Status Written: No Toner (BK)'
+              priority: DISASTER
+              manual_close: 'YES'
+            - uuid: 4bc9d9860acb4643bd7d57f0a3314365
+              expression: 'last(/Brother Printers/printers.status.written)=62121'
+              name: 'Printer Status Written: Replace Toner'
+              priority: AVERAGE
+              manual_close: 'YES'
+            - uuid: 0540ce4f0cc5402ea882c2fd7845f696
+              expression: 'last(/Brother Printers/printers.status.written)=10209'
+              name: 'Printers Status Written: Toner Low (BK)'
+              priority: AVERAGE
+              manual_close: 'YES'
+        - uuid: b3ec874cba04433ca2cd2d11272742a9
+          name: 'Alert Code'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.2.1.43.18.1.1.7.1.1
+          key: prtAlertCode
+          delay: 30s
+          trends: '0'
+          value_type: CHAR
+          description: prtAlertCode
+          valuemap:
+            name: PrtAlertCodeTC
+          tags:
+            - tag: Application
+              value: Alert
+        - uuid: b468af971e4e48e8a26d7721400f5e21
+          name: 'Alert Description'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.2.1.43.18.1.1.8.1.1
+          key: prtAlertDescription
+          delay: 30s
+          trends: '0'
+          value_type: TEXT
+          description: prtAlertDescription
+          tags:
+            - tag: Application
+              value: Alert
+        - uuid: 5c7d3533123a40dfbb1e7a1b2a438b48
+          name: 'Serial Number'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.2.1.43.5.1.1.17.1
+          key: prtGeneralSerialNumber
+          delay: 1h
+          history: 365d
+          trends: '0'
+          value_type: TEXT
+          inventory_link: SERIALNO_A
+          tags:
+            - tag: Application
+              value: 'Node Info'
+        - uuid: a10d8089354540a7911a106cceb2d422
+          name: 'Page Counter'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.2.1.43.10.2.1.4.1.1
+          key: prtMarkerLifeCount
+          delay: 5m
+          history: 30d
+          tags:
+            - tag: Application
+              value: Status
+        - uuid: 9c9db8b05b944db49d97b65f7ac42488
+          name: 'Drum Unit Total Printed'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.2.1.43.11.1.1.9.1.2
+          key: prtMarkerSuppliesLevel.2
+          delay: 5m
+          history: 30d
+          tags:
+            - tag: Application
+              value: Supplies
+        - uuid: 48923a56647247a9b2993fa4ef438171
+          name: 'Drum Unit Max Capacity'
+          type: SNMP_AGENT
+          snmp_oid: 1.3.6.1.2.1.43.11.1.1.8.1.2
+          key: prtMarkerSuppliesMaxCapacity.2
+          delay: 10m
+          history: 30d
+          tags:
+            - tag: Application
+              value: Supplies
+        - uuid: d9090394d5e34154aab4eb21de27d376
+          name: 'Device contact details'
+          type: SNMP_AGENT
+          snmp_oid: 'SNMPv2-MIB::sysContact.0'
+          key: sysContact
+          delay: 1h
+          history: 1w
+          trends: '0'
+          value_type: CHAR
+          description: 'The textual identification of the contact person for this managed node, together with information on how to contact this person.  If no contact information is known, the value is the zero-length string.'
+          inventory_link: CONTACT
+          tags:
+            - tag: Application
+              value: 'Node Info'
+        - uuid: 32ad59b5b9264f8fa854d139c1b9dd53
+          name: 'Device location'
+          type: SNMP_AGENT
+          snmp_oid: 'SNMPv2-MIB::sysLocation.0'
+          key: sysLocation
+          delay: 1h
+          history: 1w
+          trends: '0'
+          value_type: CHAR
+          description: 'The physical location of this node (e.g., `telephone closet, 3rd floor'').  If the location is unknown, the value is the zero-length string.'
+          inventory_link: LOCATION
+          tags:
+            - tag: Application
+              value: 'Node Info'
+        - uuid: 13776fc264f14599bc7c864b7b58b75a
+          name: 'Device uptime'
+          type: SNMP_AGENT
+          snmp_oid: 'SNMPv2-MIB::sysUpTime.0'
+          key: sysUpTime
+          history: 1w
+          units: uptime
+          description: 'The time since the network management portion of the system was last re-initialized.'
+          preprocessing:
+            - type: MULTIPLIER
+              parameters:
+                - '0.01'
+          tags:
+            - tag: Application
+              value: 'Node Info'
+      valuemaps:
+        - uuid: 63e20e4277f54764b1db4ba65be71bfa
+          name: brBackLightColor
+          mappings:
+            - value: '1'
+              newvalue: Green
+            - value: '2'
+              newvalue: Orange
+            - value: '3'
+              newvalue: Red
+        - uuid: 4c208a56e51040539da0b86b23623367
+          name: 'Printers status color value mapping'
+          mappings:
+            - value: '2'
+              newvalue: 'green status'
+            - value: '3'
+              newvalue: 'yellow status'
+            - value: '5'
+              newvalue: 'red status'
+        - uuid: 0920b20243774c00aebb75c05d2c459e
+          name: 'Printers status written value mapping'
+          mappings:
+            - value: '10001'
+              newvalue: Ready
+            - value: '10023'
+              newvalue: Printing
+            - value: '10209'
+              newvalue: 'Toner Low (BK)'
+            - value: '40000'
+              newvalue: Sleep
+            - value: '40010'
+              newvalue: 'No Toner (BK)'
+            - value: '41213'
+              newvalue: 'No Paper'
+            - value: '62121'
+              newvalue: 'Replace Toner'
+        - uuid: 762e4383370646459eb9fc7588ca10cb
+          name: PrtAlertCodeTC
+          mappings:
+            - value: '-1'
+              newvalue: OK
+            - value: '0'
+              newvalue: OK
+            - value: '1'
+              newvalue: other
+            - value: '2'
+              newvalue: unknown
+            - value: '3'
+              newvalue: coverOpen
+            - value: '4'
+              newvalue: coverClosed
+            - value: '5'
+              newvalue: interlockOpen
+            - value: '6'
+              newvalue: interlockClosed
+            - value: '7'
+              newvalue: configurationChange
+            - value: '8'
+              newvalue: jam
+            - value: '9'
+              newvalue: subunitMissing
+            - value: '10'
+              newvalue: subunitLifeAlmostOver
+            - value: '11'
+              newvalue: subunitLifeOver
+            - value: '12'
+              newvalue: subunitAlmostEmpty
+            - value: '13'
+              newvalue: subunitEmpty
+            - value: '14'
+              newvalue: subunitAlmostFull
+            - value: '15'
+              newvalue: subunitFull
+            - value: '16'
+              newvalue: subunitNearLimit
+            - value: '17'
+              newvalue: subunitAtLimit
+            - value: '18'
+              newvalue: subunitOpened
+            - value: '19'
+              newvalue: subunitClosed
+            - value: '20'
+              newvalue: subunitTurnedOn
+            - value: '21'
+              newvalue: subunitTurnedOff
+            - value: '22'
+              newvalue: subunitOffline
+            - value: '23'
+              newvalue: subunitPowerSaver
+            - value: '24'
+              newvalue: subunitWarmingUp
+            - value: '25'
+              newvalue: subunitAdded
+            - value: '26'
+              newvalue: subunitRemoved
+            - value: '27'
+              newvalue: subunitResourceAdded
+            - value: '28'
+              newvalue: subunitResourceRemoved
+            - value: '29'
+              newvalue: subunitRecoverableFailure
+            - value: '30'
+              newvalue: subunitUnrecoverableFailure
+            - value: '31'
+              newvalue: subunitRecoverableStorageError
+            - value: '32'
+              newvalue: subunitUnrecoverableStorageError
+            - value: '33'
+              newvalue: subunitMotorFailure
+            - value: '34'
+              newvalue: subunitMemoryExhausted
+            - value: '35'
+              newvalue: subunitUnderTemperature
+            - value: '36'
+              newvalue: subunitOverTemperature
+            - value: '37'
+              newvalue: subunitTimingFailure
+            - value: '38'
+              newvalue: subunitThermistorFailure
+            - value: '501'
+              newvalue: doorOpen
+            - value: '502'
+              newvalue: doorClosed
+            - value: '503'
+              newvalue: powerUp
+            - value: '504'
+              newvalue: powerDown
+            - value: '505'
+              newvalue: printerNMSReset
+            - value: '506'
+              newvalue: printerManualReset
+            - value: '507'
+              newvalue: printerReadyToPrint
+            - value: '801'
+              newvalue: inputMediaTrayMissing
+            - value: '802'
+              newvalue: inputMediaSizeChange
+            - value: '803'
+              newvalue: inputMediaWeightChange
+            - value: '804'
+              newvalue: inputMediaTypeChange
+            - value: '805'
+              newvalue: inputMediaColorChange
+            - value: '806'
+              newvalue: inputMediaFormPartsChange
+            - value: '807'
+              newvalue: inputMediaSupplyLow
+            - value: '808'
+              newvalue: inputMediaSupplyEmpty
+            - value: '809'
+              newvalue: inputMediaChangeRequest
+            - value: '810'
+              newvalue: inputManualInputRequest
+            - value: '811'
+              newvalue: inputTrayPositionFailure
+            - value: '812'
+              newvalue: inputTrayElevationFailure
+            - value: '813'
+              newvalue: inputCannotFeedSizeSelected
+            - value: '901'
+              newvalue: outputMediaTrayMissing
+            - value: '902'
+              newvalue: outputMediaTrayAlmostFull
+            - value: '903'
+              newvalue: outputMediaTrayFull
+            - value: '904'
+              newvalue: outputMailboxSelectFailure
+            - value: '1001'
+              newvalue: markerFuserUnderTemperature
+            - value: '1002'
+              newvalue: markerFuserOverTemperature
+            - value: '1003'
+              newvalue: markerFuserTimingFailure
+            - value: '1004'
+              newvalue: markerFuserThermistorFailure
+            - value: '1005'
+              newvalue: markerAdjustingPrintQuality
+            - value: '1101'
+              newvalue: markerTonerEmpty
+            - value: '1102'
+              newvalue: markerInkEmpty
+            - value: '1103'
+              newvalue: markerPrintRibbonEmpty
+            - value: '1104'
+              newvalue: markerTonerAlmostEmpty
+            - value: '1105'
+              newvalue: markerInkAlmostEmpty
+            - value: '1106'
+              newvalue: markerPrintRibbonAlmostEmpty
+            - value: '1107'
+              newvalue: markerWasteTonerReceptacleAlmostFull
+            - value: '1108'
+              newvalue: markerWasteInkReceptacleAlmostFull
+            - value: '1109'
+              newvalue: markerWasteTonerReceptacleFull
+            - value: '1110'
+              newvalue: markerWasteInkReceptacleFull
+            - value: '1111'
+              newvalue: markerOpcLifeAlmostOver
+            - value: '1112'
+              newvalue: markerOpcLifeOver
+            - value: '1113'
+              newvalue: markerDeveloperAlmostEmpty
+            - value: '1114'
+              newvalue: markerDeveloperEmpty
+            - value: '1115'
+              newvalue: markerTonerCartridgeMissing
+            - value: '1301'
+              newvalue: mediaPathMediaTrayMissing
+            - value: '1302'
+              newvalue: mediaPathMediaTrayAlmostFull
+            - value: '1303'
+              newvalue: mediaPathMediaTrayFull
+            - value: '1304'
+              newvalue: mediaPathCannotDuplexMediaSelected
+            - value: '1501'
+              newvalue: interpreterMemoryIncrease
+            - value: '1502'
+              newvalue: interpreterMemoryDecrease
+            - value: '1503'
+              newvalue: interpreterCartridgeAdded
+            - value: '1504'
+              newvalue: interpreterCartridgeDeleted
+            - value: '1505'
+              newvalue: interpreterResourceAdded
+            - value: '1506'
+              newvalue: interpreterResourceDeleted
+            - value: '1507'
+              newvalue: interpreterResourceUnavailable
+            - value: '1509'
+              newvalue: interpreterComplexPageEncountered
+            - value: '1801'
+              newvalue: alertRemovalOfBinaryChangeEntry
+  triggers:
+    - uuid: 53b537a361ea442c9c7d39e12048ae1c
+      expression: 'last(/Brother Printers/brBackLightColor)=2 and last(/Brother Printers/prtAlertCode)>0'
+      name: 'Warning {ITEM.VALUE2} in {HOST.NAME}'
+      priority: AVERAGE
+    - uuid: 437eaa41ef0840fe911439af0a3d20b2
+      expression: 'last(/Brother Printers/brBackLightColor)=3 and last(/Brother Printers/prtAlertCode)>0'
+      name: 'Warning {ITEM.VALUE2} in {HOST.NAME}'
+      priority: HIGH
+  graphs:
+    - uuid: 32b750c21b864ea8bea846a40941df81
+      name: 'Toner Level'
+      graph_items:
+        - color: F63100
+          item:
+            host: 'Brother Printers'
+            key: drum-use
+    - uuid: 3361c86c8b264d6fb8498ab9ac623b64
+      name: 'Total pages printed'
+      graph_items:
+        - color: 1A7C11
+          item:
+            host: 'Brother Printers'
+            key: prtMarkerLifeCount
