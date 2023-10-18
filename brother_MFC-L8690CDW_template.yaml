@@ -11,8 +11,6 @@ zabbix_export:
         ## Overview
         Brother MFC-L8690CDW Zabbix Template (can be used for other Brother Printers as well)
         Made by Victor Torstensen for Vertica A/S 
-      templates:
-        - name: 'SNMP Interfaces'
       groups:
         - name: Printer
       items:
@@ -158,15 +156,15 @@ zabbix_export:
           valuemap:
             name: 'Printers status color value mapping'
           triggers:
-            - uuid: 0742d062f5bb4a2d81a07c731d49dfa6
-              expression: 'last(/Brother Printers/printers.status.color)=5'
-              name: 'Printer Status Color: No Color Toner!'
-              priority: DISASTER
-              manual_close: 'YES'
             - uuid: 61314c7fc0e949e8bc2e053e960a678b
               expression: 'last(/Brother Printers/printers.status.color)=3'
               name: 'Printer Status Color: Almost No Color Toner!'
               priority: WARNING
+              manual_close: 'YES'
+            - uuid: 0742d062f5bb4a2d81a07c731d49dfa6
+              expression: 'last(/Brother Printers/printers.status.color)=5'
+              name: 'Printer Status Color: No Color Toner!'
+              priority: DISASTER
               manual_close: 'YES'
         - uuid: 339afff04c64485f8d9442467169a103
           name: 'Status written'
